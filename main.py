@@ -54,7 +54,7 @@ def main(args, configs, seed=None):
     model = HDSM(configs, args).to(device)
     params_group = [{'params': model.parameters()}]
     model_optimizer = torch.optim.Adam(params_group, lr=configs.lr, betas=(configs.beta1, configs.beta2),
-                                       weight_decay=0)
+                                       weight_decay=1e-4)
     model_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer, T_max=configs.epoch)
 
     # Trainer

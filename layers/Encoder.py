@@ -26,9 +26,11 @@ class EncoderLayer(nn.Module):
         self.pos_ffn = PoswiseFeedForwardNet()  # 前馈神经网络
         self.layer_norm1 = nn.LayerNorm(d_model)
         self.layer_norm2 = nn.LayerNorm(d_model)
+        self.dropout = nn.Dropout(p=Config.dropout)
 
     def forward(self, q_inputs, kv_inputs, kv_mask):
         attn_output, _ = self.multihead_attn(q_inputs, kv_inputs, kv_inputs, key_padding_mask=kv_mask)
+        attn_output = self.dropout(attn_output)  # Dropout
         enc_outputs = self.layer_norm1(q_inputs + attn_output)  # 残差连接与层归一化
         enc_outputs = self.pos_ffn(enc_outputs)  # 前馈网络(conv+relu+conv+残差)
         return self.layer_norm2(enc_outputs)  # 再次进行层归一化
